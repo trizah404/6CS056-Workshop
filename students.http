@@ -1,0 +1,65 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+### Test 1 - Create a student (expect 201)
+# @name createStudent
+POST {{baseUrl}}/students
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Triza Shashankar",
+    "email": "triza.api@example.com",
+    "phone": "9800000000",
+    "address": "Kathmandu",
+    "date_of_birth": "2004-05-12"
+}
+
+### Test 2 - Validation error (expect 422)
+POST {{baseUrl}}/students
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "",
+    "email": "not-an-email"
+}
+
+### Test 3 - Duplicate email (expect 422)
+POST {{baseUrl}}/students
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Triza Shashankar",
+    "email": "triza.api@example.com",
+    "phone": "9800000000"
+}
+
+### Test 4 - Get all students (expect 200)
+GET {{baseUrl}}/students
+Accept: application/json
+
+### Test 5 - Get one student (expect 200)
+GET {{baseUrl}}/students/{{createStudent.response.body.$.data.id}}
+Accept: application/json
+
+### Test 6 - Update the student (expect 200)
+PUT {{baseUrl}}/students/{{createStudent.response.body.$.data.id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Triza S.",
+    "email": "triza.api@example.com",
+    "phone": "9811111111",
+    "address": "Lalitpur",
+    "date_of_birth": "2004-05-12"
+}
+
+### Test 7 - Delete the student (expect 204)
+DELETE {{baseUrl}}/students/{{createStudent.response.body.$.data.id}}
+Accept: application/json
+
+### Test 8 - Deleted student is gone (expect 404)
+GET {{baseUrl}}/students/{{createStudent.response.body.$.data.id}}
+Accept: application/json
